@@ -1,0 +1,88 @@
+<odoo>
+    <record id="repository_kanban" model="ir.ui.view"><field name="name">sh.github.repository.kanban</field><field name="model">sh.github.repository</field><field name="arch" type="xml"><kanban create="0" edit="0" delete="0" class="sh_github_kanban"><field name="private"/><field name="archived"/><field name="clone_path"/><templates><t t-name="card"><div class="d-flex align-items-center gap-2 mb-3"><i class="fa fa-github fa-2x sh_github_accent" title="GitHub repository"/><strong class="sh_github_repo_name"><field name="name"/></strong></div><div class="d-flex gap-2 mb-3 flex-wrap"><span t-if="record.private.raw_value" class="badge text-bg-secondary">Private</span><span t-else="" class="badge text-bg-info">Public</span><span t-if="record.archived.raw_value" class="badge text-bg-warning">Archived</span><field name="default_branch" widget="badge"/></div><field name="description" class="text-muted sh_github_description"/><div class="sh_github_card_path mt-3"><i class="fa fa-folder-open me-2" title="Clone path"/><field t-if="record.clone_path.raw_value" name="clone_path"/><span t-else="" class="text-muted">Set a clone path to get started</span></div><div class="mt-3 text-muted small">Last GitHub refresh: <field name="synced_at"/></div><footer class="mt-3"><button name="action_open_github" type="object" class="btn btn-link p-0" icon="fa-external-link" string="Open GitHub"/></footer></t></templates></kanban></field></record><record id="repository_search" model="ir.ui.view"><field name="name">sh.github.repository.search</field><field name="model">sh.github.repository</field><field name="arch" type="xml"><search><field name="name"/><field name="clone_path"/><filter name="private" string="Private" domain="[('private','=',True)]"/><filter name="public" string="Public" domain="[('private','=',False)]"/><separator/><filter name="path_set" string="Path Configured" domain="[('clone_path','!=',False)]"/><filter name="no_path" string="Needs Clone Path" domain="[('clone_path','=',False)]"/><separator/><filter name="archived" string="Archived on GitHub" domain="[('archived','=',True)]"/></search></field></record><record id="item_search" model="ir.ui.view"><field name="name">sh.github.item.search</field><field name="model">sh.github.item</field><field name="arch" type="xml"><search><field name="name"/><field name="repository_id"/><field name="author"/><filter name="commits" string="Commits" domain="[('kind','=','commit')]"/><filter name="prs" string="Pull Requests" domain="[('kind','=','pr')]"/><filter name="issues" string="Issues" domain="[('kind','=','issue')]"/><separator/><filter name="open" string="Open" domain="[('state','=','open')]"/><filter name="closed" string="Closed" domain="[('state','=','closed')]"/><separator/><filter name="group_repo" string="Repository" context="{'group_by': 'repository_id'}"/><filter name="group_kind" string="Type" context="{'group_by': 'kind'}"/></search></field></record><record id="repository_list" model="ir.ui.view">
+        <field name="name">sh.github.repository.list</field><field name="model">sh.github.repository</field>
+        <field name="arch" type="xml"><list create="0" edit="0" delete="0">
+            <field name="name"/><field name="private"/><field name="default_branch" widget="badge"/><field name="clone_path"/><field name="local_commit" optional="hide"/>
+        </list></field>
+    </record>
+    <record id="repository_form" model="ir.ui.view">
+        <field name="name">sh.github.repository.form</field><field name="model">sh.github.repository</field>
+        <field name="arch" type="xml"><form create="0" delete="0" class="sh_github_form">
+<header>
+<button name="action_clone" type="object" string="Clone Repository" class="btn-primary" icon="fa-download" groups="sh_odoo_github_connector.group_admin"/>
+<button name="action_pull" type="object" string="Pull Latest" icon="fa-refresh" groups="sh_odoo_github_connector.group_admin"/>
+<button name="action_sync" type="object" string="Refresh GitHub Data" icon="fa-cloud-download" groups="sh_odoo_github_connector.group_operator"/>
+<button name="action_manage" type="object" string="GitHub Action" icon="fa-bolt" groups="sh_odoo_github_connector.group_admin"/>
+<button name="action_open_github" type="object" string="Open GitHub" icon="fa-external-link"/>
+</header><sheet>
+<widget name="web_ribbon" title="Archived on GitHub" bg_color="text-bg-secondary" invisible="not archived"/>
+<div class="sh_github_heading"><div class="text-muted text-uppercase small mb-2">Repository workspace</div><h1><field name="name"/></h1><field name="description" nolabel="1" placeholder="No description provided on GitHub."/><div class="d-flex gap-2 mt-3 flex-wrap"><span class="badge text-bg-secondary" invisible="not private"><i class="fa fa-lock me-1"/>Private</span><span class="badge text-bg-info" invisible="private"><i class="fa fa-globe me-1"/>Public</span><field name="default_branch" widget="badge"/></div></div>
+<field name="private" invisible="1"/><field name="archived" invisible="1"/>
+<notebook>
+<page string="Local Clone" name="local_clone">
+<div class="sh_github_hint mb-3"><i class="fa fa-folder-open me-2"/>Choose a folder on the Odoo server, save, then clone. Use Pull Latest to update an existing clone.</div>
+<group><group string="Clone destination"><field name="clone_path" placeholder="/opt/odoo/custom_addons/my_repository" class="sh_github_mono"/><field name="clone_branch" placeholder="Use the default GitHub branch"/></group><group string="Last local update"><field name="local_commit" class="sh_github_mono"/><field name="local_updated_at"/><field name="synced_at" string="GitHub Data Refreshed"/></group></group>
+<div class="text-muted mb-3">Clone and pull update source files. Install or upgrade your Odoo modules separately.</div>
+<separator string="Clone / Pull Output"/><field name="local_log" nolabel="1" class="sh_github_log" placeholder="Clone and pull results will appear here."/>
+</page>
+<page string="Branches" name="branches"><field name="branch_ids"><list create="0" edit="0" delete="0"><field name="name" widget="badge"/><field name="commit_sha" class="sh_github_mono"/></list></field></page>
+<page string="Commits" name="commits"><field name="item_ids" domain="[('kind', '=', 'commit')]"><list create="0" edit="0" delete="0"><field name="name"/><field name="sha" optional="hide"/><field name="author"/></list></field></page>
+<page string="Pull Requests" name="pull_requests"><field name="item_ids" domain="[('kind', '=', 'pr')]"><list create="0" edit="0" delete="0"><field name="number"/><field name="name"/><field name="state" widget="badge" decoration-success="state == 'open'" decoration-info="state == 'merged'" decoration-muted="state == 'closed'"/><field name="author"/></list></field></page>
+<page string="Issues" name="issues"><field name="item_ids" domain="[('kind', '=', 'issue')]"><list create="0" edit="0" delete="0"><field name="number"/><field name="name"/><field name="state" widget="badge" decoration-success="state == 'open'" decoration-muted="state == 'closed'"/><field name="author"/></list></field></page>
+</notebook><div class="text-muted small mt-3">GitHub tabs show the latest 100 commits, pull requests and issues loaded by Refresh GitHub Data. Open GitHub for full history.</div>
+</sheet></form></field></record>
+    <record id="item_list" model="ir.ui.view"><field name="name">sh.github.item.list</field><field name="model">sh.github.item</field>
+        <field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="repository_id" options="{'no_create': True}"/><field name="kind" widget="badge"/><field name="number"/><field name="name"/><field name="state" widget="badge" decoration-success="state in ('success', 'open')" decoration-warning="state in ('attention', 'submitting')" decoration-info="state in ('merged', 'committed')"/><field name="author"/></list></field>
+    </record>
+    <record id="item_form" model="ir.ui.view"><field name="name">sh.github.item.form</field><field name="model">sh.github.item</field>
+        <field name="arch" type="xml"><form create="0" edit="0" delete="0" class="sh_github_form"><header>
+            <button name="action_refresh_details" type="object" string="Refresh Details" groups="sh_odoo_github_connector.group_operator"/>
+            <button name="action_manage" type="object" string="GitHub Action" invisible="kind == 'commit'" groups="sh_odoo_github_connector.group_admin"/>
+            <button name="action_open_github" type="object" string="Open GitHub"/>
+        </header><sheet><div class="sh_github_heading"><div class="text-muted text-uppercase small mb-2">GitHub activity</div><h1><field name="name"/></h1></div><group><field name="repository_id" options="{'no_create': True}"/><field name="kind" widget="badge"/><field name="number" invisible="kind == 'commit'"/><field name="sha" class="sh_github_mono"/><field name="state" widget="badge" decoration-success="state in ('success', 'open')" decoration-warning="state in ('attention', 'submitting')" decoration-info="state in ('merged', 'committed')"/><field name="author"/></group><notebook>
+            <page string="Description"><field name="body"/></page><page string="GitHub Details"><field name="details" widget="ace" options="{'mode': 'json'}"/></page>
+        </notebook></sheet></form></field>
+    </record>
+    <record id="management_action_form" model="ir.ui.view"><field name="name">sh.github.action.form</field><field name="model">sh.github.action</field>
+        <field name="arch" type="xml"><form string="GitHub Action" class="sh_github_form">
+            <div class="alert alert-info" role="status"><field name="permission_hint" nolabel="1"/></div>
+            <group string="Action and target">
+                <field name="attempt_id" invisible="1"/><field name="loaded_target" invisible="1"/>
+                <field name="operation"/>
+                <field name="repository_id" required="operation != 'repo_create'" invisible="operation == 'repo_create'" options="{'no_create': True}"/>
+                <field name="organization" invisible="operation != 'repo_create'"/>
+                <field name="repo_name" invisible="operation != 'repo_create'" required="operation == 'repo_create'"/>
+                <field name="private" invisible="operation != 'repo_create'" widget="boolean_toggle"/>
+                <field name="ref" invisible="not (operation in ('branch_create','branch_rename','branch_delete') or operation in ('file_create','file_update','file_delete'))"/>
+                <field name="new_branch" invisible="operation not in ('branch_create', 'branch_rename')"/>
+                <field name="number" invisible="operation not in ('pr_edit','pr_close','pr_reopen','pr_merge','pr_review','issue_edit','issue_close','issue_reopen','comment')"/>
+                <field name="title" invisible="operation not in ('pr_create','pr_edit','issue_create','issue_edit')"/>
+                <field name="head" invisible="operation != 'pr_create'"/><field name="base" invisible="operation != 'pr_create'"/><field name="draft" invisible="operation != 'pr_create'" widget="boolean_toggle"/>
+                <field name="merge_method" invisible="operation != 'pr_merge'" widget="radio" options="{'horizontal': True}"/>
+                <field name="review_event" invisible="operation != 'pr_review'" widget="radio" options="{'horizontal': True}"/>
+                <field name="file_path" invisible="not operation in ('file_create','file_update','file_delete')"/>
+                <field name="commit_message" invisible="not operation in ('file_create','file_update','file_delete')"/>
+                <field name="loaded_sha" invisible="operation not in ('file_update','file_delete','pr_merge','pr_review')"/>
+                <field name="confirmation" invisible="operation not in ('repo_delete','branch_delete')" required="operation in ('repo_delete','branch_delete')"/>
+            </group>
+            <button name="action_load" type="object" string="Load Details for Review" class="btn-secondary" invisible="operation not in ('file_update','file_delete','pr_edit','pr_merge','pr_review','issue_edit')" icon="fa-search"/>
+            <group><field name="body" invisible="operation not in ('repo_create','repo_describe','pr_create','pr_edit','pr_review','issue_create','issue_edit','comment')"/>
+            <field name="content" invisible="not operation in ('file_create','file_update','file_delete')" readonly="operation == 'file_delete'" widget="ace" options="{'mode': 'text'}"/></group>
+            <footer><button name="action_apply" type="object" string="Apply on GitHub" class="btn-primary" invisible="attempt_id != False" confirm="Apply this action to the selected GitHub repository? Review the action, branch, number and content before continuing." icon="fa-check"/><button string="Cancel" special="cancel"/></footer>
+        </form></field>
+    </record>
+    <record id="action_log_list" model="ir.ui.view"><field name="name">sh.github.action.log.list</field><field name="model">sh.github.action.log</field>
+        <field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="create_date"/><field name="repository_name"/><field name="operation"/><field name="target"/><field name="state" widget="badge" decoration-success="state in ('success', 'open')" decoration-warning="state in ('attention', 'submitting')" decoration-info="state in ('merged', 'committed')"/><field name="requested_by" widget="many2one_avatar_user"/></list></field>
+    </record>
+    <record id="action_log_form" model="ir.ui.view"><field name="name">sh.github.action.log.form</field><field name="model">sh.github.action.log</field>
+        <field name="arch" type="xml"><form create="0" edit="0" delete="0" class="sh_github_form"><sheet><div class="sh_github_heading"><div class="text-muted text-uppercase small mb-2">Action history</div><h1><field name="operation"/></h1></div><group><field name="create_date"/><field name="repository_name"/><field name="operation"/><field name="target"/><field name="requested_by" widget="many2one_avatar_user"/><field name="state" widget="badge" decoration-success="state in ('success', 'open')" decoration-warning="state in ('attention', 'submitting')" decoration-info="state in ('merged', 'committed')"/><field name="message" class="sh_github_log"/></group></sheet></form></field>
+    </record>
+    <record id="repositories_action" model="ir.actions.act_window"><field name="name">Repositories</field><field name="res_model">sh.github.repository</field><field name="view_mode">kanban,list,form</field><field name="help" type="html"><p class="o_view_nocontent_smiling_face">Connect your GitHub account in Settings to load your repositories.</p></field></record>
+    <record id="items_action" model="ir.actions.act_window"><field name="name">Commits, Pull Requests &amp; Issues</field><field name="res_model">sh.github.item</field><field name="view_mode">list,form</field><field name="help" type="html"><p class="o_view_nocontent_smiling_face">Open a repository and click Refresh GitHub Data to load commits, pull requests and issues.</p></field></record>
+    <record id="new_github_action" model="ir.actions.act_window"><field name="name">GitHub Action</field><field name="res_model">sh.github.action</field><field name="view_mode">form</field><field name="target">new</field></record>
+    <record id="logs_action" model="ir.actions.act_window"><field name="name">Action History</field><field name="res_model">sh.github.action.log</field><field name="view_mode">list,form</field><field name="help" type="html"><p class="o_view_nocontent_smiling_face">Your GitHub actions will appear here after you apply an action.</p></field></record>
+    <menuitem id="menu_repositories" name="Repositories" parent="menu_github" action="repositories_action" sequence="1"/>
+    <menuitem id="menu_new_action" name="GitHub Action" parent="menu_github" action="new_github_action" sequence="2" groups="sh_odoo_github_connector.group_admin"/>
+    <menuitem id="menu_items" name="Commits, PRs &amp; Issues" parent="menu_github" action="items_action" sequence="3"/>
+    <menuitem id="menu_action_history" name="Action History" parent="menu_github" action="logs_action" sequence="4"/>
+</odoo>

@@ -1,0 +1,28 @@
+<odoo>
+    <record id="settings_form" model="ir.ui.view">
+        <field name="name">sh.github.settings</field><field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml"><xpath expr="//form" position="inside">
+            <app string="GitHub Connector" name="sh_odoo_github_connector" logo="/sh_odoo_github_connector/static/description/icon.png" groups="base.group_system">
+                <block title="Connect your GitHub account">
+                    <setting string="Personal Access Token" help="For reading: Contents read. For changes: Contents, Pull requests and Issues write. Repository administration actions need Administration write. Stored in this database; masking does not encrypt it." title="Use a fine-grained token restricted to the repositories you manage.">
+                        <div class="p-3 mb-3 rounded border bg-light">
+                            <div class="o_form_label">Where to get your access token</div>
+                            <p class="text-muted mb-1">GitHub &#8594; Settings &#8594; Developer settings &#8594; Personal access tokens &#8594; Fine-grained tokens &#8594; Generate new token.</p>
+                            <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Create a GitHub access token <i class="fa fa-external-link"/></a>
+                            <p class="text-muted mt-1 mb-0">Select your repositories, choose the required permissions, generate the token, then copy and paste it below.</p>
+                        </div>
+                        <field name="sh_github_token" password="True" placeholder="Paste your GitHub personal access token" class="w-100"/>
+                        <div class="mt16"><button name="action_sh_connect" type="object" string="Connect &amp; Sync" class="btn-primary" icon="fa-plug"/></div>
+                    </setting>
+                </block>
+            </app>
+        </xpath></field>
+    </record>
+    <record id="settings_action" model="ir.actions.act_window">
+        <field name="name">GitHub Settings</field><field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field><field name="target">current</field>
+        <field name="context">{'module': 'sh_odoo_github_connector'}</field>
+    </record>
+    <menuitem id="menu_settings" name="Settings" parent="menu_github" action="settings_action" sequence="90" groups="base.group_system"/>
+</odoo>
