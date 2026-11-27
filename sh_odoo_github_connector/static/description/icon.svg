@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+<title>SH GitHub Connector</title>
+<path d="M15 14V36" fill="none" stroke="#985184" stroke-width="7"/>
+<path d="M15 31C15 22 36 26 36 17V13" fill="none" stroke="#1AD3BB" stroke-width="7"/>
+<path d="M11.5 31C11.5 27.7 13.5 25.5 18.5 23.7V31Z" fill="#005E7A"/>
+<path d="M22 12A7 7 0 1 0 8 12A7 7 0 1 0 22 12Z M18 12A3 3 0 1 0 12 12A3 3 0 1 0 18 12Z" fill="#985184" fill-rule="evenodd"/>
+<path d="M43 12A7 7 0 1 0 29 12A7 7 0 1 0 43 12Z M39 12A3 3 0 1 0 33 12A3 3 0 1 0 39 12Z" fill="#1AD3BB" fill-rule="evenodd"/>
+<path d="M22 38A7 7 0 1 0 8 38A7 7 0 1 0 22 38Z M18 38A3 3 0 1 0 12 38A3 3 0 1 0 18 38Z" fill="#985184" fill-rule="evenodd"/>
+</svg>

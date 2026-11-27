@@ -1,0 +1,10 @@
+id,name,model_id,group_id/id,operation,domain
+project_viewer,Read projects,sh.github.project,group_viewer,r,
+project_admin,Read archived projects,sh.github.project,group_admin,r,
+run_viewer,Read runs,sh.github.run,group_viewer,r,
+repository_viewer,Read repositories,sh.github.repository,group_viewer,r,
+branch_viewer,Read branches,sh.github.branch,group_viewer,r,
+item_viewer,Read GitHub items,sh.github.item,group_viewer,r,
+management_wizard,GitHub management wizard,sh.github.action,group_admin,crud,
+action_log_viewer,Read GitHub action history,sh.github.action.log,group_viewer,r,
+repository_admin,Configure local clone paths,sh.github.repository,group_admin,ru,
