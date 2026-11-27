@@ -34,8 +34,8 @@
                 'GitHub: https://github.com/muhammad-shuhaife\n'
                 'LinkedIn: https://www.linkedin.com/in/shuhaife-binhamza/\n'
                 'Support: shuhaifebinhamza@gmail.com\n',
- 'author': 'Muhammad Shuhaife',
- 'maintainer': 'Muhammad Shuhaife',
+ 'author': 'Shuhaife Binhamza',
+ 'maintainer': 'Shuhaife Binhamza',
  'website': 'https://shuhaife.pages.dev/',
  'support': 'shuhaifebinhamza@gmail.com',
  'category': 'Administration',
