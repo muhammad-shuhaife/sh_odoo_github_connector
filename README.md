@@ -1,0 +1,1 @@
+# sh_odoo_github_connector
