@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+project_viewer,Read projects,model_sh_github_project,group_viewer,1,0,0,0
+project_admin,Read archived projects,model_sh_github_project,group_admin,1,0,0,0
+run_viewer,Read runs,model_sh_github_run,group_viewer,1,0,0,0
+repository_viewer,Read repositories,model_sh_github_repository,group_viewer,1,0,0,0
+branch_viewer,Read branches,model_sh_github_branch,group_viewer,1,0,0,0
+item_viewer,Read GitHub items,model_sh_github_item,group_viewer,1,0,0,0
+management_wizard,GitHub management wizard,model_sh_github_action,group_admin,1,1,1,1
+action_log_viewer,Read GitHub action history,model_sh_github_action_log,group_viewer,1,0,0,0
+repository_admin,Configure local clone paths,model_sh_github_repository,group_admin,1,1,0,0

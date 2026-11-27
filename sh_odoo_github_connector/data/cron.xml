@@ -1,0 +1,9 @@
+<odoo>
+    <record id="cron_github_runs" model="ir.cron">
+        <field name="name">GitHub: legacy dispatcher (disabled)</field>
+        <field name="model_id" ref="model_sh_github_run"/>
+        <field name="state">code</field><field name="code">model._cron_process()</field>
+        <field name="interval_number">1</field><field name="interval_type">minutes</field>
+        <field name="active">False</field>
+    </record>
+</odoo>
